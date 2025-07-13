@@ -1,12 +1,17 @@
 import React, { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Upload, FileSpreadsheet, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useData } from '../../contexts/DataContext';
 import toast from 'react-hot-toast';
 
+
+
+
 export default function FileUpload() {
   const { addFile } = useData();
+  const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -52,8 +57,20 @@ export default function FileUpload() {
       size: file.size
     };
 
+    // 🔥 Send to backend
+
+    await fetch('http://localhost:5000/api/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(fileData),
+    });
+    
+
     addFile(fileData);
     toast.success('File uploaded successfully!');
+    navigate(`/visualizer/${fileData.id}`);
   } catch (error) {
     console.error('Error processing file:', error);
     toast.error('Error processing file. Please try again.');
@@ -70,6 +87,7 @@ export default function FileUpload() {
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       processFile(files[0]);
+      (e.target as HTMLInputElement).value = '';
     }
   }, [processFile]);
 

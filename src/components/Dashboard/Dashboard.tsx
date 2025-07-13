@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+
 import {
   Upload,
   BarChart3,
@@ -11,17 +12,33 @@ import {
 } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function Dashboard() {
   const { files, deleteFile } = useData();
+  const { setCurrentFile } = useData();
+  const navigate = useNavigate();
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+const handleStartVisualizing = () => {
+  setCurrentFile(null);
+  navigate('/visualizer');
+};
+
+const handleUploadClick = () => {
+  setCurrentFile(null);
+  navigate('/visualizer');
+};
+
+
 
   return (
     <div className="min-h-screen pt-16 bg-purple-200 text-black">
@@ -43,13 +60,14 @@ export default function Dashboard() {
           </p>
           <Link to="/visualizer">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-pink-800 from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleStartVisualizing}
+            className="bg-pink-800 from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
             >
               <Upload className="w-5 h-5 inline mr-2" />
-              Start Visualizing
-            </motion.button>
+              Start uploading
+              </motion.button>
           </Link>
         </motion.div>
 

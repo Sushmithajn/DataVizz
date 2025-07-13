@@ -86,4 +86,35 @@ router.post('/register/verify', async (req, res) => {
   }
 });
 
+
+// routes/files.js or routes/upload.js
+const File = require('../models/File.cjs');
+
+router.post('/upload', async (req, res) => {
+  try {
+    const { id, name, uploadDate, data, headers, size } = req.body;
+
+    const newFile = new File({
+      id,
+      name,
+      uploadDate,
+      data,
+      headers,
+      size,
+    });
+
+    await newFile.save();
+
+    // ✅ Log success in terminal
+    console.log(`✅ File "${name}" uploaded and saved to database.`);
+
+    res.status(201).json({ message: 'File saved to database.' });
+  } catch (error) {
+    console.error('❌ Upload failed:', error);
+    res.status(500).json({ error: 'Server error while saving file.' });
+  }
+});
+
+
+
 module.exports = router;

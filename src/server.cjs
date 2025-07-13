@@ -20,7 +20,9 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', require('./routes/auth.cjs'));
+const authRoutes = require('./routes/auth.cjs');
+app.use('/api', authRoutes); // ✅ mount at /api so /api/upload and /api/register work
+
 
 // Start server
 const PORT = process.env.PORT || 5000;

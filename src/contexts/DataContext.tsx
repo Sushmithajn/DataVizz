@@ -26,6 +26,8 @@ interface DataContextType {
   deleteFile: (id: string) => void;
 }
 
+
+
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
