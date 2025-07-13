@@ -20,7 +20,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       await login(data.email, data.password);
-      toast.success('Welcome back! sushmitha ');
+      toast.success('Welcome back!');
     } catch (error) {
       toast.error('Invalid credentials');
     } finally {
