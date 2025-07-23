@@ -56,10 +56,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
 
 
-      const mockToken = 'mock-token-123';
+      const mockToken = process.env.MOCK_TOKEN;
+
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
-      localStorage.setItem('token', mockToken);
+      localStorage.setItem('token', mockToken ?? 'mock-token');
     } else {
       throw new Error('Registration failed');
     }
