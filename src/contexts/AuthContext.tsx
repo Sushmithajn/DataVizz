@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 interface User {
   id: string;
@@ -27,30 +28,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Mock authentication - in production, this would call your API
-    if (email && password) {
-      const mockUser = {
-        id: '1',
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
-        name: email.split('@')[0]
-      };
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-    } else {
-      throw new Error('Invalid credentials');
+        password,
+      });
+
+      const { user, token } = response.data;
+
+      
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+    } catch (error: any) {
+      // Throw a clean error message for frontend
+      throw new Error(error.response?.data?.message || 'Login failed');
     }
   };
 
   const register = async (email: string, password: string, name: string) => {
-    // Mock registration - in production, this would call your API
+    // You should replace this with a real API call
     if (email && password && name) {
       const mockUser = {
         id: '1',
         email,
-        name
+        name,
       };
+
+
+      const mockToken = 'mock-token-123';
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
+      localStorage.setItem('token', mockToken);
     } else {
       throw new Error('Registration failed');
     }
@@ -62,13 +71,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated: !!user,
-      login,
-      register,
-      logout
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

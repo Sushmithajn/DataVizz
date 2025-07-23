@@ -87,33 +87,39 @@ router.post('/register/verify', async (req, res) => {
 });
 
 
-// routes/files.js or routes/upload.js
-const File = require('../models/File.cjs');
+// 🔐 POST /api/auth/login
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
-router.post('/upload', async (req, res) => {
   try {
-    const { id, name, uploadDate, data, headers, size } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return res.status(404).json({ message: 'No account found. Please register.' });
+    }
 
-    const newFile = new File({
-      id,
-      name,
-      uploadDate,
-      data,
-      headers,
-      size,
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Optional: generate JWT (only if using token-based auth)
+    const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: existingUser._id,
+        name: existingUser.name,
+        email: existingUser.email
+      },
+      token
     });
-
-    await newFile.save();
-
-    // ✅ Log success in terminal
-    console.log(`✅ File "${name}" uploaded and saved to database.`);
-
-    res.status(201).json({ message: 'File saved to database.' });
-  } catch (error) {
-    console.error('❌ Upload failed:', error);
-    res.status(500).json({ error: 'Server error while saving file.' });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error during login' });
   }
 });
+
 
 
 

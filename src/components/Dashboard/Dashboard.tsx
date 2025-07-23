@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { useData } from '../../contexts/DataContext';
+import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+
 
 import {
   Upload,
@@ -10,15 +16,39 @@ import {
   Calendar,
   Trash2,
 } from 'lucide-react';
-import { useData } from '../../contexts/DataContext';
-import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+
 
 
 export default function Dashboard() {
-  const { files, deleteFile } = useData();
-  const { setCurrentFile } = useData();
+  const { files, deleteFile, setFiles, setCurrentFile } = useData();
   const navigate = useNavigate();
+  useEffect(() => {
+  const fetchFiles = async () => {
+    try {
+      const token = localStorage.getItem('token'); // ✅ Get token from localStorage
+
+      const res = await axios.get('http://localhost:5000/api/files/all', {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Include the token in the header
+        },
+      });
+
+      const filesWithParsedDates = res.data.map((file: any) => ({
+        ...file,
+        uploadDate: new Date(file.uploadDate),
+      }));
+
+      setFiles(filesWithParsedDates);
+    } catch (error) {
+      console.error('❌ Failed to fetch files from DB:', error);
+    }
+  };
+
+  fetchFiles();
+}, [setFiles]);
+
+
+
 
   const formatFileSize = (bytes: number) => {
   if (bytes === 0) return '0 Bytes';

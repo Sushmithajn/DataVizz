@@ -59,13 +59,16 @@ export default function FileUpload() {
 
     // 🔥 Send to backend
 
-    await fetch('http://localhost:5000/api/upload', {
+    const token = localStorage.getItem('token');
+    await fetch('http://localhost:5000/api/files/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // 🔐 Send the token
       },
       body: JSON.stringify(fileData),
     });
+
     
 
     addFile(fileData);

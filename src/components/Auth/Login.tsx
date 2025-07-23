@@ -17,16 +17,26 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
 
   const onSubmit = async (data: LoginForm) => {
-    setIsLoading(true);
-    try {
-      await login(data.email, data.password);
-      toast.success('Welcome back!');
-    } catch (error) {
-      toast.error('Invalid credentials');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  try {
+  await login(data.email, data.password);
+  toast.success('Welcome back!');
+  // navigate('/dashboard');
+} catch (error: any) {
+  const message = error.message;
+  if (message === 'No account found. Please register.') {
+    toast.error('You don’t have an account. Please register.');
+  } else if (message === 'Invalid credentials') {
+    toast.error('Incorrect password');
+  } else {
+    toast.error('Login failed. Please try again.');
+  }
+} finally {
+  setIsLoading(false); // ← You missed this
+}
+
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">

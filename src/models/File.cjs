@@ -7,6 +7,14 @@ const fileSchema = new mongoose.Schema({
   data: [[mongoose.Schema.Types.Mixed]], // 2D array
   headers: [String],
   size: Number,
+
+  // ✅ Add this line to store who uploaded the file
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    autopopulate: true,
+  },
 });
 
 const File = mongoose.model('File', fileSchema);

@@ -43,7 +43,13 @@ export default function Register() {
       }
     } catch (error: any) {
       console.log(error.response);
-      toast.error(error.response?.data?.message || 'Registration failed');
+      const message = error.response?.data?.message;
+
+      if (message === 'Email already exists' || message === 'Email already registered') {
+        toast.error('You already have an account. Please login');
+      } else {
+        toast.error(message || 'Registration failed');
+      }
     } finally {
       setIsLoading(false);
     }

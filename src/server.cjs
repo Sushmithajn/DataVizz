@@ -19,9 +19,13 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-// Routes
+// Import routes
 const authRoutes = require('./routes/auth.cjs');
-app.use('/api', authRoutes); // ✅ mount at /api so /api/upload and /api/register work
+const uploadRoutes = require('./routes/upload.cjs');
+
+// Use them separately
+app.use('/api/auth', authRoutes);     // ➜ /api/auth/register/*
+app.use('/api/files', uploadRoutes);  // ➜ /api/files/upload
 
 
 // Start server
