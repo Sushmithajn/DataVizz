@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-
+import axios from 'axios';
 
 // File data interface
 export interface DataFile {
@@ -57,10 +57,24 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     setChartConfig(prev => ({ ...prev, ...config }));
   };
 
-  const deleteFile = (id: string) => {
-    setFilesState(prev => prev.filter(f => f.id !== id));
-    if (currentFile?.id === id) {
-      setCurrentFile(null);
+  const deleteFile = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/files/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Remove file from local state
+      setFilesState(prev => prev.filter(f => f.id !== id));
+
+      // Clear currentFile if it's the one being deleted
+      if (currentFile?.id === id) {
+        setCurrentFile(null);
+      }
+    } catch (error) {
+      console.error('❌ Error deleting file from backend:', error);
     }
   };
 

@@ -9,10 +9,13 @@ require('dotenv').config();
 dotenv.config();
 
 const app = express();
+const fileRoutes = require('./routes/fileRoutes.cjs');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/api/files', fileRoutes);
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
