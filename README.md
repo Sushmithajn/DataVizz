@@ -6,7 +6,7 @@ A MERN stack web app to upload Excel files, analyze data and create interactive 
  User signup/login with JWT authentication
  Upload `.xls`, `.xlsx` or .csv files
  Parse Excel data with SheetJS and store in MongoDB
- Create 2D charts (Chart.js) and 3D charts (Three.js)
+ Create 2D charts  and 3D charts 
  Choose X and Y axes dynamically
  Download generated charts
  View history of uploads and analyses
